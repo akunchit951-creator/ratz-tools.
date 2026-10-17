@@ -1,1 +1,83 @@
 
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RATZ TOOLS</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#071426;color:#fff;font-family:Arial,sans-serif;padding:20px}
+header{padding:20px 0;color:#36adff;font-size:27px;font-weight:bold}
+p{color:#9fc8e8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#102844;border:1px solid #19466d;border-radius:15px;padding:18px 12px;color:white;text-align:left;font-size:16px}
+.card span{display:block;font-size:29px;margin-bottom:12px}
+#output{margin-top:18px;background:#102844;border-radius:12px;padding:16px;white-space:pre-wrap;overflow-wrap:anywhere}
+button{cursor:pointer}
+</style>
+</head>
+<body>
+<header>🔧 RATZ TOOLS</header>
+<p>Personal Utility App · Simple • Fast • Useful</p>
+<div class="grid">
+<button class="card" onclick="show('File Manager','Pilih file menggunakan tombol di bawah.')"><span>📁</span>File Manager</button>
+<button class="card" onclick="show('Code Editor','Buka file teks untuk membaca dan mengedit kode.')"><span>💻</span>Code Editor</button>
+<button class="card" onclick="show('Python & Termux','Buka Termux untuk menjalankan perintah Python.')"><span>🐍</span>Python & Termux</button>
+<button class="card" onclick="show('ZIP & RAR','Pilih arsip untuk mulai mengelola file ZIP.')"><span>📦</span>ZIP & RAR</button>
+<button class="card" onclick="show('Info HP','Informasi browser: '+navigator.userAgent)"><span>📱</span>Info HP</button>
+<button class="card" onclick="show('Pencari File','Cari file teks yang ingin kamu buka.')"><span>🔎</span>Pencari File</button>
+</div>
+<div id="output">Selamat datang! Pilih salah satu menu di atas.</div>
+<script>
+function show(title,description){
+document.getElementById('output').innerHTML='';
+const heading=document.createElement('h3');
+heading.textContent=title;
+const text=document.createElement('p');
+text.textContent=description;
+const area=document.getElementById('output');
+area.append(heading,text);
+if(title==='File Manager'||title==='Code Editor'||title==='Pencari File'){
+const input=document.createElement('input');
+input.type='file';
+input.multiple=true;
+input.style.maxWidth='100%';
+area.append(input);
+input.onchange=()=>{
+const files=[...input.files];
+if(title==='Pencari File'){
+const q=prompt('Cari nama file:');
+if(q)area.append('\nHasil: '+files.filter(f=>f.name.toLowerCase().includes(q.toLowerCase())).map(f=>f.name).join(', '));
+}else if(title==='Code Editor'&&files[0]){
+const reader=new FileReader();
+reader.onload=()=>{
+const editor=document.createElement('textarea');
+editor.style='width:100%;height:220px;background:#071426;color:white;margin-top:12px';
+editor.value=reader.result;
+area.append(editor);
+const save=document.createElement('button');
+save.textContent='Unduh hasil edit';
+save.onclick=()=>{
+const a=document.createElement('a');
+a.href=URL.createObjectURL(new Blob([editor.value],{type:'text/plain'}));
+a.download=files[0].name;a.click();
+};
+area.append(save);
+};
+reader.readAsText(files[0]);
+}else files.forEach(f=>{const p=document.createElement('p');p.textContent=f.name+' · '+f.size+' byte';area.append(p)});
+};
+}
+if(title==='Python & Termux'){
+const a=document.createElement('a');
+a.href='https://play.google.com/store/apps/details?id=com.termux';
+a.textContent='Buka halaman Termux';
+a.style.color='#36adff';
+area.append(a);
+}
+}
+</script>
+</body>
+</html>
