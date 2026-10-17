@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,76 +6,170 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RATZ TOOLS</title>
 <style>
+:root{--bg:#06101f;--card:#102541;--blue:#25baff;--text:#edf7ff;--muted:#9db8d5}
 *{box-sizing:border-box}
-body{margin:0;background:#071426;color:#fff;font-family:Arial,sans-serif;padding:20px}
-header{padding:20px 0;color:#36adff;font-size:27px;font-weight:bold}
-p{color:#9fc8e8}
+body{margin:0;background:radial-gradient(ellipse at top,#12345a,var(--bg) 65%);color:var(--text);font-family:Arial,sans-serif;min-height:100vh}
+header{padding:25px 20px 18px}
+.logo{width:66px;height:66px;border:2px solid #37c4ff;border-radius:20px;display:grid;place-items:center;font-size:34px;font-weight:900;color:#65d4ff;box-shadow:0 0 24px #129dff55;transform:rotate(-4deg)}
+h1{margin:17px 0 5px;font-size:30px;letter-spacing:2px}
+h1 span{color:var(--blue)}
+p{color:var(--muted);line-height:1.5}
+main{padding:0 16px 35px;max-width:650px;margin:auto}
+.status{padding:13px;background:#0e2038;border:1px solid #1d3c5d;border-radius:14px;margin-bottom:18px;font-size:13px;color:#9bdcff}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{background:#102844;border:1px solid #19466d;border-radius:15px;padding:18px 12px;color:white;text-align:left;font-size:16px}
-.card span{display:block;font-size:29px;margin-bottom:12px}
-#output{margin-top:18px;background:#102844;border-radius:12px;padding:16px;white-space:pre-wrap;overflow-wrap:anywhere}
-button{cursor:pointer}
+button{font:inherit;color:inherit;cursor:pointer}
+.tile{min-height:126px;text-align:left;padding:17px;background:linear-gradient(145deg,#153253,#0c1c32);border:1px solid #24476c;border-radius:18px;transition:.18s}
+.tile:active{transform:scale(.97);border-color:var(--blue)}
+.tile .ico{font-size:29px;display:block;margin-bottom:15px}
+.tile b{font-size:15px}
+.tile small{display:block;color:#9bb8d6;margin-top:6px;font-size:12px}
+.panel{display:none;margin-top:18px;padding:18px;background:#0d1c30;border:1px solid #24476c;border-radius:18px}
+.panel h2{font-size:20px;margin-top:0}
+.action{background:#087fc0;border:0;border-radius:11px;padding:12px 14px;margin:5px 5px 5px 0;font-weight:bold}
+.secondary{background:#1b304a;border:1px solid #315272}
+input,textarea,select{width:100%;padding:12px;background:#071321;color:white;border:1px solid #315272;border-radius:10px;margin:8px 0;font:inherit}
+textarea{min-height:180px;resize:vertical}
+.result{white-space:pre-wrap;overflow-wrap:anywhere;background:#071321;padding:12px;border-radius:10px;color:#b9e8ff;font-size:13px}
+footer{text-align:center;padding:25px;color:#6888a8;font-size:12px}
 </style>
 </head>
 <body>
-<header>🔧 RATZ TOOLS</header>
-<p>Personal Utility App · Simple • Fast • Useful</p>
+<header>
+<div class="logo">R</div>
+<h1>RATZ <span>TOOLS</span></h1>
+<p>PERSONAL UTILITY SUITE<br>Simple · Fast · Useful</p>
+</header>
+<main>
+<div class="status">● SYSTEM READY <span style="float:right">RATZ TOOLS v2.0</span></div>
 <div class="grid">
-<button class="card" onclick="show('File Manager','Pilih file menggunakan tombol di bawah.')"><span>📁</span>File Manager</button>
-<button class="card" onclick="show('Code Editor','Buka file teks untuk membaca dan mengedit kode.')"><span>💻</span>Code Editor</button>
-<button class="card" onclick="show('Python & Termux','Buka Termux untuk menjalankan perintah Python.')"><span>🐍</span>Python & Termux</button>
-<button class="card" onclick="show('ZIP & RAR','Pilih arsip untuk mulai mengelola file ZIP.')"><span>📦</span>ZIP & RAR</button>
-<button class="card" onclick="show('Info HP','Informasi browser: '+navigator.userAgent)"><span>📱</span>Info HP</button>
-<button class="card" onclick="show('Pencari File','Cari file teks yang ingin kamu buka.')"><span>🔎</span>Pencari File</button>
+<button class="tile" onclick="openPanel('files')"><span class="ico">📁</span><b>File Manager</b><small>Pilih dan lihat file</small></button>
+<button class="tile" onclick="openPanel('editor')"><span class="ico">⌨️</span><b>Code Editor</b><small>Edit file teks</small></button>
+<button class="tile" onclick="openPanel('python')"><span class="ico">🐍</span><b>Python & Termux</b><small>Panduan perintah</small></button>
+<button class="tile" onclick="openPanel('archive')"><span class="ico">📦</span><b>ZIP & RAR</b><small>Pilih arsip</small></button>
+<button class="tile" onclick="openPanel('info')"><span class="ico">📱</span><b>Info HP</b><small>Detail browser dan layar</small></button>
+<button class="tile" onclick="openPanel('search')"><span class="ico">🔎</span><b>Pencari File</b><small>Cari di file yang dipilih</small></button>
 </div>
-<div id="output">Selamat datang! Pilih salah satu menu di atas.</div>
+
+<section id="files" class="panel">
+<h2>📁 File Manager</h2>
+<p>Pilih file melalui pemilih file Android. Aplikasi hanya dapat melihat file yang kamu pilih.</p>
+<input id="filepick" type="file" onchange="showFile(this)">
+<div id="fileinfo" class="result">Belum ada file dipilih.</div>
+<button class="action" onclick="document.getElementById('filepick').click()">Pilih file</button>
+</section>
+
+<section id="editor" class="panel">
+<h2>⌨️ Code Editor</h2>
+<p>Pilih file teks, edit isinya, lalu simpan hasil sebagai file baru.</p>
+<input id="editpick" type="file" accept=".txt,.html,.css,.js,.json,.py,.md,.xml,.yml,.yaml,.java,.log" onchange="readText(this)">
+<textarea id="edittext" placeholder="Isi file akan muncul di sini. Kamu juga bisa mengetik teks baru."></textarea>
+<button class="action" onclick="saveText()">Unduh hasil edit</button>
+</section>
+
+<section id="python" class="panel">
+<h2>🐍 Python & Termux</h2>
+<p>Perintah dasar untuk Termux. Perintah ini ditampilkan untuk disalin dan dijalankan sendiri di Termux.</p>
+<div class="result" id="commands">pkg update
+pkg install python
+python --version
+pwd
+ls
+python namafile.py</div>
+<button class="action" onclick="copyCommands()">Salin perintah</button>
+<p>Pastikan nama file dan lokasi folder sudah benar sebelum menjalankan skrip.</p>
+</section>
+
+<section id="archive" class="panel">
+<h2>📦 ZIP & RAR</h2>
+<p>Pilih arsip untuk melihat nama dan ukurannya. Versi ini belum dapat mengekstrak atau membuat ZIP/RAR secara langsung.</p>
+<input type="file" accept=".zip,.rar,.7z" onchange="archiveInfo(this)">
+<div id="archiveinfo" class="result">Belum ada arsip dipilih.</div>
+<p>Ekstraksi arsip bisa dilakukan menggunakan aplikasi arsip tepercaya di HP.</p>
+</section>
+
+<section id="info" class="panel">
+<h2>📱 Info HP</h2>
+<div id="deviceinfo" class="result"></div>
+<button class="action" onclick="showDevice()">Perbarui info</button>
+</section>
+
+<section id="search" class="panel">
+<h2>🔎 Pencari File</h2>
+<p>Pilih beberapa file, lalu cari nama file di antara file yang dipilih.</p>
+<input id="searchpick" type="file" multiple onchange="setSearchFiles(this)">
+<input id="query" placeholder="Ketik nama file..." oninput="searchFiles()">
+<div id="searchresult" class="result">Pilih file terlebih dahulu.</div>
+</section>
+</main>
+<footer>RATZ TOOLS · Personal Utility App</footer>
+
 <script>
-function show(title,description){
-document.getElementById('output').innerHTML='';
-const heading=document.createElement('h3');
-heading.textContent=title;
-const text=document.createElement('p');
-text.textContent=description;
-const area=document.getElementById('output');
-area.append(heading,text);
-if(title==='File Manager'||title==='Code Editor'||title==='Pencari File'){
-const input=document.createElement('input');
-input.type='file';
-input.multiple=true;
-input.style.maxWidth='100%';
-area.append(input);
-input.onchange=()=>{
-const files=[...input.files];
-if(title==='Pencari File'){
-const q=prompt('Cari nama file:');
-if(q)area.append('\nHasil: '+files.filter(f=>f.name.toLowerCase().includes(q.toLowerCase())).map(f=>f.name).join(', '));
-}else if(title==='Code Editor'&&files[0]){
+let selectedFiles=[];
+function openPanel(id){
+document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+const panel=document.getElementById(id);
+panel.style.display='block';
+panel.scrollIntoView({behavior:'smooth',block:'start'});
+if(id==='info')showDevice();
+}
+function showFile(input){
+const f=input.files[0];if(!f)return;
+document.getElementById('fileinfo').textContent=
+'Nama: '+f.name+'\nUkuran: '+formatSize(f.size)+'\nTipe: '+(f.type||'Tidak diketahui')+
+'\n\nFile berhasil dipilih.';
+}
+function readText(input){
+const f=input.files[0];if(!f)return;
 const reader=new FileReader();
-reader.onload=()=>{
-const editor=document.createElement('textarea');
-editor.style='width:100%;height:220px;background:#071426;color:white;margin-top:12px';
-editor.value=reader.result;
-area.append(editor);
-const save=document.createElement('button');
-save.textContent='Unduh hasil edit';
-save.onclick=()=>{
-const a=document.createElement('a');
-a.href=URL.createObjectURL(new Blob([editor.value],{type:'text/plain'}));
-a.download=files[0].name;a.click();
-};
-area.append(save);
-};
-reader.readAsText(files[0]);
-}else files.forEach(f=>{const p=document.createElement('p');p.textContent=f.name+' · '+f.size+' byte';area.append(p)});
-};
+reader.onload=()=>document.getElementById('edittext').value=reader.result;
+reader.onerror=()=>alert('File tidak bisa dibaca.');
+reader.readAsText(f);
 }
-if(title==='Python & Termux'){
-const a=document.createElement('a');
-a.href='https://play.google.com/store/apps/details?id=com.termux';
-a.textContent='Buka halaman Termux';
-a.style.color='#36adff';
-area.append(a);
+function saveText(){
+const text=document.getElementById('edittext').value;
+const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');a.href=url;a.download='ratz-edited.txt';a.click();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
+function copyCommands(){
+const t=document.getElementById('commands').textContent;
+if(navigator.clipboard&&navigator.clipboard.writeText){
+navigator.clipboard.writeText(t).then(()=>alert('Perintah disalin.')).catch(()=>alert(t));
+}else{alert(t);}
+}
+function archiveInfo(input){
+const f=input.files[0];if(!f)return;
+document.getElementById('archiveinfo').textContent=
+'Nama: '+f.name+'\nUkuran: '+formatSize(f.size)+
+'\n\nFile terpilih. Ekstraksi belum tersedia di versi ini.';
+}
+function showDevice(){
+document.getElementById('deviceinfo').textContent=
+'Platform: '+(navigator.platform||'Tidak tersedia')+
+'\nBrowser: '+navigator.userAgent+
+'\nBahasa: '+navigator.language+
+'\nUkuran layar: '+screen.width+' × '+screen.height+
+'\nUkuran area: '+innerWidth+' × '+innerHeight+
+'\nOnline: '+(navigator.onLine?'Ya':'Tidak')+
+'\n\nCatatan: informasi ini berasal dari WebView/browser, bukan semua data sistem Android.';
+}
+function setSearchFiles(input){
+selectedFiles=Array.from(input.files||[]);
+searchFiles();
+}
+function searchFiles(){
+const q=document.getElementById('query').value.toLowerCase().trim();
+const found=selectedFiles.filter(f=>f.name.toLowerCase().includes(q));
+document.getElementById('searchresult').textContent=selectedFiles.length===0?
+'Pilih file terlebih dahulu.':
+found.length?found.map(f=>f.name+' — '+formatSize(f.size)).join('\n'):
+'Tidak ada nama file yang cocok.';
+}
+function formatSize(n){
+if(n<1024)return n+' B';
+if(n<1048576)return (n/1024).toFixed(1)+' KB';
+return (n/1048576).toFixed(2)+' MB';
 }
 </script>
 </body>
